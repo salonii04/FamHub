@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
+import { Layout } from './components/layout/Layout'
+import { HomePage } from './pages/HomePage'
 
 export default function App() {
-  const [health, setHealth] = useState('checking...');
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then((data) => setHealth(data.status))
-      .catch(() => setHealth('server down'));
-  }, []);
-
   return (
-    <h1 className="p-8 text-2xl font-semibold">FamHub — API: {health}</h1>
-  );
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  )
 }
