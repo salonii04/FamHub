@@ -69,11 +69,11 @@ export const runMigrations = async () => {
         // Migration 003: parent / enfant role.
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'parent'",
         // Migration 004: configurable currency.
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS currency VARCHAR(3) DEFAULT 'EUR'",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS currency VARCHAR(3) DEFAULT 'RS'",
         // Migration 006: profile photo as a data URL.
         'ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT',
         // Migration 009: per-user interface language.
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(8) NOT NULL DEFAULT 'fr'",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS language VARCHAR(8) NOT NULL DEFAULT 'en'",
         // From the regional-preferences migration.
         'ALTER TABLE users ADD COLUMN IF NOT EXISTS week_start_day SMALLINT CHECK (week_start_day BETWEEN 1 AND 7)',
         // Migration: family-wide optional-module toggles.
@@ -89,6 +89,21 @@ export const runMigrations = async () => {
         )`,
         'CREATE INDEX IF NOT EXISTS idx_password_resets_user ON password_resets(user_id)',
         'CREATE UNIQUE INDEX IF NOT EXISTS idx_password_resets_token_hash ON password_resets(token_hash)',
+        `CREATE TABLE IF NOT EXISTS tasks (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            title VARCHAR(255) NOT NULL,
+            description TEXT,
+            is_completed BOOLEAN DEFAULT FALSE,
+            due_date TIMESTAMP,
+            frequency VARCHAR(50),
+            priority VARCHAR(50),
+            completed_at TIMESTAMP,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`,
+        'CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id)',
+        'CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date)',
     ];
 
     for (const statement of migrations) {

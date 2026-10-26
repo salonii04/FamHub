@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import tasksRoutes from './routes/tasks';
 import authRoutes from './routes/auth';
 import { loadEnv } from './config/loadEnv';
 
@@ -44,6 +45,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth/login', authRateLimiter);
 app.use('/api/auth/register', authRateLimiter);
 app.use('/api/auth', authRoutes);
+app.use('/api/tasks', tasksRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ success: false, error: 'Route not found' });

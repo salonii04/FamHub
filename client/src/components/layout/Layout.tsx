@@ -1,10 +1,16 @@
 import { NavLink, Outlet } from 'react-router'
 import { cn } from '../../lib/cn'
+import { useAuth } from '../../contexts/AuthContext'
 
 // Add an entry here whenever a new page ships.
-const navItems = [{ to: '/', label: 'Home', end: true }]
+const navItems = [
+  { to: '/', label: 'Home', end: true },
+  { to: '/tasks', label: 'Tasks' },
+]
 
 export function Layout() {
+  const { user, logout } = useAuth()
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-line bg-surface">
@@ -27,6 +33,13 @@ export function Layout() {
               </NavLink>
             ))}
           </nav>
+
+          <div className="ml-auto flex items-center gap-3 text-sm">
+            <span className="text-muted">{user?.name}</span>
+            <button type="button" onClick={() => void logout()} className="underline">
+              Log out
+            </button>
+          </div>
         </div>
       </header>
 
