@@ -1,9 +1,15 @@
+export type UserRole = 'parent' | 'child';
 export interface User {
   id: string;
-  name: string;
   email: string;
-  familyId: string;
-  role: 'admin' | 'member';
+  name: string;
+  role: UserRole;
+  is_owner: boolean;
+  currency: string;
+  language: string;
+  week_start_day: number | null;
+  avatar_url: string | null;
+  disabled_modules: string[];
 }
 
 export interface Family {
@@ -49,8 +55,8 @@ export interface TaskStatistics {
   pending: number;
   completionRate: number;
   byPriority: {
-    Haute: number;
-    Moyenne: number;
-    Basse: number;
+    High: number;
+    Medium: number;
+    Low: number;
   };
 }

@@ -17,8 +17,8 @@ if (!process.env.POSTGRES_PASSWORD) {
 const pool = new Pool({
     host: process.env.POSTGRES_HOST || 'localhost',
     port: parseInt(process.env.POSTGRES_PORT || '5432'),
-    database: process.env.POSTGRES_DB || 'openfamily',
-    user: process.env.POSTGRES_USER || 'openfamily',
+    database: process.env.POSTGRES_DB || 'famhub',
+    user: process.env.POSTGRES_USER || 'famhub',
     password: process.env.POSTGRES_PASSWORD || 'changeme',
     max: 20,
     idleTimeoutMillis: 30000,
@@ -42,7 +42,7 @@ export const query = async (text: string, params?: any[]) => {
 export const runMigrations = async () => {
     const migrations = [
         'CREATE EXTENSION IF NOT EXISTS "uuid-ossp"',
-        // Base users table (OpenFamily's migration 000).
+        // Base users table
         `CREATE TABLE IF NOT EXISTS users (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             email VARCHAR(255) UNIQUE NOT NULL,
@@ -66,10 +66,10 @@ export const runMigrations = async () => {
         'CREATE INDEX IF NOT EXISTS idx_family_invites_token ON family_invites(token)',
         'CREATE INDEX IF NOT EXISTS idx_family_invites_owner ON family_invites(owner_id)',
         "ALTER TABLE family_invites ADD COLUMN IF NOT EXISTS role VARCHAR(20) NOT NULL DEFAULT 'parent'",
-        // Migration 003: parent / enfant role.
+        // Migration 003: parent / child role.
         "ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'parent'",
         // Migration 004: configurable currency.
-        "ALTER TABLE users ADD COLUMN IF NOT EXISTS currency VARCHAR(3) DEFAULT 'RS'",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS currency VARCHAR(3) DEFAULT 'INR'",
         // Migration 006: profile photo as a data URL.
         'ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT',
         // Migration 009: per-user interface language.

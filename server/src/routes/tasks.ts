@@ -147,9 +147,9 @@ router.get('/statistics', async (req: AuthRequest, res) => {
                 pending: parseInt(stats.pending, 10) || 0,
                 completionRate: Math.round(completionRate),
                 byPriority: {
-                    Haute: parseInt(stats.high_priority, 10) || 0,
-                    Moyenne: parseInt(stats.medium_priority, 10) || 0,
-                    Basse: parseInt(stats.low_priority, 10) || 0,
+                    High: parseInt(stats.high_priority, 10) || 0,
+                    Medium: parseInt(stats.medium_priority, 10) || 0,
+                    Low: parseInt(stats.low_priority, 10) || 0,
                 },
             },
         });

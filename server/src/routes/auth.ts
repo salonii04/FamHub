@@ -86,17 +86,17 @@ router.post('/register', async (req, res) => {
                 [inviteToken]
             );
             if (inviteResult.rows.length === 0) {
-                return res.status(400).json({ success: false, error: 'Invitation invalide ou expirée' });
+                return res.status(400).json({ success: false, error: 'Invalid or expired invitation' });
             }
 
             const row = inviteResult.rows[0] as { id: string; owner_id: string; invitee_email: string | null; role: string | null };
 
             // If the invite targets a specific email, enforce it matches the registering account.
             if (row.invitee_email && normalizeEmail(row.invitee_email) !== normalizedEmail) {
-                return res.status(403).json({ success: false, error: 'Cette invitation est réservée à une autre adresse e-mail' });
+                return res.status(403).json({ success: false, error: 'This invitation is reserved for a different email address' });
             }
 
-            invite = { id: row.id, owner_id: row.owner_id, role: row.role === 'enfant' ? 'enfant' : 'parent' };
+            invite = { id: row.id, owner_id: row.owner_id, role: row.role === 'child' ? 'child' : 'parent' };
         }
 
         // The account role is NEVER taken from the client: an invited member gets the
@@ -132,7 +132,7 @@ router.post('/register', async (req, res) => {
             disabled_modules = parseDisabledModules(ownerModules.rows[0]?.disabled_modules);
         }
 
-        res.json({ success: true, data: { user: { ...user, is_owner: isOwner, role: user.role, currency: user.currency || 'EUR', disabled_modules }, token } });
+        res.json({ success: true, data: { user: { ...user, is_owner: isOwner, role: user.role, currency: user.currency || 'INR', disabled_modules }, token } });
     } catch (error) {
         console.error('Register error:', error);
         res.status(500).json({ success: false, error: 'Internal server error' });
@@ -177,7 +177,7 @@ router.post('/login', async (req, res) => {
         res.json({
             success: true,
             data: {
-                user: { id: user.id, email: user.email, name: user.name, role: user.role, is_owner: isOwner, currency: user.currency || 'EUR', language: user.language || 'fr', week_start_day: user.week_start_day ?? null, avatar_url: user.avatar_url ?? null, disabled_modules },
+                user: { id: user.id, email: user.email, name: user.name, role: user.role, is_owner: isOwner, currency: user.currency || 'INR', language: user.language || 'en', week_start_day: user.week_start_day ?? null, avatar_url: user.avatar_url ?? null, disabled_modules },
                 token
             }
         });
@@ -326,7 +326,7 @@ router.post('/refresh', authMiddleware, async (req: AuthRequest, res) => {
             success: true,
             data: {
                 token,
-                user: { id: user.id, email: user.email, name: user.name, role: user.role, is_owner: isOwner, currency: user.currency || 'EUR', language: user.language || 'fr', week_start_day: user.week_start_day ?? null, avatar_url: user.avatar_url ?? null, disabled_modules },
+                user: { id: user.id, email: user.email, name: user.name, role: user.role, is_owner: isOwner, currency: user.currency || 'INR', language: user.language || 'en', week_start_day: user.week_start_day ?? null, avatar_url: user.avatar_url ?? null, disabled_modules },
             },
         });
     } catch (error) {
@@ -388,7 +388,7 @@ router.put('/profile', authMiddleware, async (req: AuthRequest, res) => {
                 return res.status(400).json({ success: false, error: 'Invalid image format' });
             }
             if (avatar_url.length > 1_500_000) {
-                return res.status(400).json({ success: false, error: 'Image trop volumineuse' });
+                return res.status(400).json({ success: false, error: 'Image is too large' });
             }
             fields.push(`avatar_url = $${idx++}`);
             values.push(avatar_url);

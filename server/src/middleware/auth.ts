@@ -48,11 +48,11 @@ export const isParentAccount = async (actualUserId: string | undefined): Promise
     const row = result.rows[0] as { role?: string; is_owner?: boolean } | undefined;
     if (!row) return false;
     if (row.is_owner) return true;
-    return row.role !== 'enfant';
+    return row.role !== 'child';
 };
 
 /**
- * Restrict a route to "parent" (or owner) accounts. Accounts with the "enfant"
+ * Restrict a route to "parent" (or owner) accounts. Accounts with the "child"
  * role get read-only access and are rejected on write operations guarded by this.
  * Must run after authMiddleware.
  */
@@ -72,10 +72,10 @@ export const requireParent = async (req: AuthRequest, res: Response, next: NextF
             return next();
         }
 
-        if (row.role === 'enfant') {
+        if (row.role === 'child') {
             return res.status(403).json({
                 success: false,
-                error: 'Action réservée aux parents.',
+                error: 'This action is restricted to parents.',
             });
         }
 
