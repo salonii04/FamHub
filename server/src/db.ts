@@ -104,6 +104,23 @@ export const runMigrations = async () => {
         )`,
         'CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id)',
         'CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date)',
+        `CREATE TABLE IF NOT EXISTS family_members (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            name VARCHAR(255) NOT NULL,
+            role VARCHAR(50) NOT NULL DEFAULT 'Other',
+            birth_date DATE,
+            color VARCHAR(7) NOT NULL DEFAULT '#3B82F6',
+            allergies TEXT,
+            medications TEXT,
+            emergency_contact_name TEXT,
+            emergency_contact_phone TEXT,
+            notes TEXT,
+            avatar_url TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`,
+        'CREATE INDEX IF NOT EXISTS idx_family_members_user_id ON family_members(user_id)',
     ];
 
     for (const statement of migrations) {

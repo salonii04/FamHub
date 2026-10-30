@@ -17,6 +17,35 @@ export interface Family {
   name: string;
   createdAt: string;
 }
+export interface FamilyMember {
+  id: string;
+  name: string;
+  role: string;
+  color: string;
+  birthdate: string | null;
+  allergies: string[];
+  medications: string[];
+  emergency_contact_name: string | null;
+  emergency_contact_phone: string | null;
+  notes: string | null;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateFamilyMemberInput {
+  name: string;
+  role?: string;
+  birthdate?: string;
+  color?: string;
+  allergies?: string[];
+  medications?: string[];
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  notes?: string;
+}
+
+export type UpdateFamilyMemberInput = Partial<CreateFamilyMemberInput>;
 
 export interface Task {
   id: string;

@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import tasksRoutes from './routes/tasks';
 import authRoutes from './routes/auth';
+import familyRoutes from './routes/family';
 import { loadEnv } from './config/loadEnv';
 
 loadEnv();
@@ -59,5 +60,8 @@ app.use((err: any, req: express.Request, res: express.Response, _next: express.N
         error: status === 413 ? 'Request entity too large' : status === 400 ? 'Malformed request body' : 'Internal server error',
     });
 });
+
+app.use('/api/tasks', tasksRoutes);
+app.use('/api/family', familyRoutes);
 
 export default app;
