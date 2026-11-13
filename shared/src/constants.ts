@@ -6,3 +6,6 @@ export type TaskPriority = (typeof TASK_PRIORITIES)[number];
 
 export const TASK_FREQUENCIES = ['Once', 'Daily', 'Weekly', 'Monthly'] as const;
 export type TaskFrequency = (typeof TASK_FREQUENCIES)[number];
+
+export const SHOPPING_CATEGORIES = ["Food", "Baby", "Household", "Health", "Other"] as const;
+export const REMINDER_OPTIONS = [0, 30, 60] as const;

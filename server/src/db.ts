@@ -1,10 +1,12 @@
 import { Pool, types } from 'pg';
 import { loadEnv } from './config/loadEnv';
 
+
 loadEnv();
 
 // Return DATE columns as plain 'YYYY-MM-DD' strings instead of JS Date objects.
 types.setTypeParser(1082, (val: string) => val);
+types.setTypeParser(1700, (value) => parseFloat(value));
 
 if (!process.env.POSTGRES_PASSWORD) {
     if (process.env.NODE_ENV === 'production') {
@@ -121,6 +123,36 @@ export const runMigrations = async () => {
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`,
         'CREATE INDEX IF NOT EXISTS idx_family_members_user_id ON family_members(user_id)',
+        `CREATE TABLE IF NOT EXISTS shopping_items (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            name TEXT NOT NULL,
+            quantity NUMERIC(10, 2) NOT NULL DEFAULT 1 CHECK (quantity > 0),
+            unit TEXT,
+            price NUMERIC(10, 2) CHECK (price IS NULL OR price >= 0),
+            category TEXT NOT NULL DEFAULT 'Other',
+            notes TEXT,
+            checked BOOLEAN NOT NULL DEFAULT FALSE,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );`,
+        'CREATE INDEX IF NOT EXISTS idx_shopping_items_user ON shopping_items(user_id);',
+        `CREATE TABLE IF NOT EXISTS appointments (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            member_id UUID REFERENCES family_members(id) ON DELETE SET NULL,
+            title TEXT NOT NULL,
+            description TEXT,
+            location TEXT,
+            start_time TIMESTAMPTZ NOT NULL,
+            end_time TIMESTAMPTZ NOT NULL,
+            color TEXT NOT NULL DEFAULT '#3b82f6',
+            reminder_minutes INTEGER,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            CHECK (end_time > start_time)
+        );`
+
     ];
 
     for (const statement of migrations) {

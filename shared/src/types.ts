@@ -1,3 +1,5 @@
+import type { REMINDER_OPTIONS, SHOPPING_CATEGORIES } from "./constants";
+
 export type UserRole = 'parent' | 'child';
 export interface User {
   id: string;
@@ -88,4 +90,28 @@ export interface TaskStatistics {
     Medium: number;
     Low: number;
   };
+}
+
+export interface ShoppingItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unit: string | null;
+  price: number | null;
+  category: (typeof SHOPPING_CATEGORIES)[number];
+  notes: string | null;
+  checked: boolean;
+  created_at: string;
+}
+
+export interface Appointment {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  start_time: string;
+  end_time: string;
+  member_id: string | null;
+  color: string;
+  reminder_minutes: (typeof REMINDER_OPTIONS)[number] | null;
 }

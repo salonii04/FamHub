@@ -5,6 +5,8 @@ import { Layout } from './components/layout/Layout'
 import { HomePage } from './pages/HomePage'
 import { TasksPage } from './pages/TasksPage'
 import { LoginPage } from './pages/LoginPage'
+import { CalendarPage } from './pages/CalendarPage'
+import { ShoppingListPage } from './pages/ShoppingListPage'
 
 export default function App() {
   return (
@@ -16,7 +18,9 @@ export default function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               <Route index element={<HomePage />} />
-              <Route path="tasks" element={<TasksPage />} />
+              <Route path="/tasks" element={<TasksPage />} />
+              <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/shopping" element={<ShoppingListPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Route>
