@@ -9,3 +9,6 @@ export type TaskFrequency = (typeof TASK_FREQUENCIES)[number];
 
 export const SHOPPING_CATEGORIES = ["Food", "Baby", "Household", "Health", "Other"] as const;
 export const REMINDER_OPTIONS = [0, 30, 60] as const;
+
+export const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack'] as const;
+export type MealType = (typeof MEAL_TYPES)[number];

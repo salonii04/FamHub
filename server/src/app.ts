@@ -5,8 +5,9 @@ import rateLimit from 'express-rate-limit';
 import tasksRoutes from './routes/tasks';
 import authRoutes from './routes/auth';
 import familyRoutes from './routes/family';
-import shoppingRoutes from "./routes/shopping";
-import appointmentRoutes from "./routes/appointments";
+import shoppingRoutes from './routes/shopping';
+import appointmentRoutes from './routes/appointments';
+import mealPlansRoutes from './routes/mealPlans';
 import { loadEnv } from './config/loadEnv';
 
 loadEnv();
@@ -53,6 +54,7 @@ app.use("/api/shopping", shoppingRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use('/api/family', familyRoutes);
+app.use('/api/meal-plans', mealPlansRoutes)
 
 app.use((req, res) => {
     res.status(404).json({ success: false, error: 'Route not found' });

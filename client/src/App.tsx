@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage'
 import { CalendarPage } from './pages/CalendarPage'
 import { ShoppingListPage } from './pages/ShoppingListPage'
 import { FamilyPage } from './pages/FamilyPage'
+import { MealPlanningPage } from './pages/MealPlanningPage'
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
               <Route path="/tasks" element={<TasksPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/shopping" element={<ShoppingListPage />} />
+              <Route path="/meals" element={<MealPlanningPage />} />
               <Route path="/Family" element={<FamilyPage />} />              
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>

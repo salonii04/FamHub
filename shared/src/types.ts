@@ -1,4 +1,5 @@
 import type { REMINDER_OPTIONS, SHOPPING_CATEGORIES } from "./constants";
+import type { MEAL_TYPES } from './constants';
 
 export type UserRole = 'parent' | 'child';
 export interface User {
@@ -115,3 +116,22 @@ export interface Appointment {
   color: string;
   reminder_minutes: (typeof REMINDER_OPTIONS)[number] | null;
 }
+
+
+export interface MealPlan {
+  id: string;
+  date: string;
+  meal_type: (typeof MEAL_TYPES)[number];
+  custom_meal: string | null;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface CreateMealPlanInput {
+  date: string;
+  meal_type: (typeof MEAL_TYPES)[number];
+  custom_meal?: string;
+  notes?: string;
+}
+
+export type UpdateMealPlanInput = Partial<CreateMealPlanInput>;

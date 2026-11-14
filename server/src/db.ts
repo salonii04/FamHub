@@ -151,7 +151,20 @@ export const runMigrations = async () => {
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
             CHECK (end_time > start_time)
-        );`
+        );`,
+        `CREATE TABLE IF NOT EXISTS meal_plans (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            date DATE NOT NULL,
+            meal_type VARCHAR(50) NOT NULL,
+            custom_meal TEXT,
+            notes TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, date, meal_type)
+        )`,
+        'CREATE INDEX IF NOT EXISTS idx_meal_plans_user_id ON meal_plans(user_id)',
+        'CREATE INDEX IF NOT EXISTS idx_meal_plans_date ON meal_plans(date)',
 
     ];
 
