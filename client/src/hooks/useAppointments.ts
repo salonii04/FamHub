@@ -15,7 +15,7 @@ export function useAppointments({ from, to }: AppointmentRange) {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      setAppointments(await api.get<Appointment[]>(`/appointments?from=${from}&to=${to}`))
+      setAppointments(await api.get<Appointment[]>(`/api/appointments?from=${from}&to=${to}`))
       setError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not load appointments')
@@ -29,12 +29,12 @@ export function useAppointments({ from, to }: AppointmentRange) {
   }, [load])
 
   const createAppointment = async (body: Record<string, unknown>) => {
-    await api.post('/appointments', body)
+    await api.post('/api/appointments', body)
     await load()
   }
 
   const deleteAppointment = async (id: string) => {
-    await api.delete(`/appointments/${id}`)
+    await api.delete(`/api/appointments/${id}`)
     await load()
   }
 

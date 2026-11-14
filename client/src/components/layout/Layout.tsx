@@ -6,6 +6,8 @@ import { useAuth } from '../../contexts/AuthContext'
 const navItems = [
   { to: '/', label: 'Home', end: true },
   { to: '/tasks', label: 'Tasks' },
+  { to: '/calendar', label: 'Calendar' },
+  { to: '/shopping', label: 'Shopping List' },
 ]
 
 export function Layout() {

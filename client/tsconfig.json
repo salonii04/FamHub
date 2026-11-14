@@ -8,7 +8,10 @@
     "declarationMap": false,
     "sourceMap": false,
     "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] },
+    "paths": { 
+      "@/*": ["src/*"],
+      "@famhub/shared": ["../shared/src/index.ts"]
+     },
     "types": ["vite/client"]
   },
   "include": ["src", "vite.config.ts"]

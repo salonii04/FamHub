@@ -5,7 +5,10 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "paths": {
+      "@famhub/shared": ["../shared/src/index.ts"]
+     },
   },
   "include": ["src"],
   "references": [{ "path": "../shared" }]

@@ -8,7 +8,7 @@ export function useShoppingList() {
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
-    setItems(await api.get<ShoppingItem[]>("/shopping"));
+    setItems(await api.get<ShoppingItem[]>("/api/shopping"));
     setLoading(false);
   }, []);
 
@@ -17,22 +17,22 @@ export function useShoppingList() {
   }, [load]);
 
   const addItem = async (body: Record<string, unknown>) => {
-    await api.post("/shopping", body);
+    await api.post("/api/shopping", body);
     await load();
   };
 
   const toggleItem = async (item: ShoppingItem) => {
-    await api.put(`/shopping/${item.id}`, { checked: !item.checked });
+    await api.put(`/api/shopping/${item.id}`, { checked: !item.checked });
     await load();
   };
 
   const removeItem = async (id: string) => {
-    await api.delete(`/shopping/${id}`);
+    await api.delete(`/api/shopping/${id}`);
     await load();
   };
 
   const clearChecked = async () => {
-    await api.delete("/shopping/checked");
+    await api.delete("/api/shopping/checked");
     await load();
   };
 

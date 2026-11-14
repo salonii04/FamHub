@@ -51,6 +51,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use("/api/shopping", shoppingRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use('/api/tasks', tasksRoutes);
+app.use('/api/family', familyRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ success: false, error: 'Route not found' });
@@ -65,7 +67,5 @@ app.use((err: any, req: express.Request, res: express.Response, _next: express.N
     });
 });
 
-app.use('/api/tasks', tasksRoutes);
-app.use('/api/family', familyRoutes);
 
 export default app;
