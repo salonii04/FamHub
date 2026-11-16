@@ -185,6 +185,18 @@ export const runMigrations = async () => {
             monthly_limit NUMERIC(12, 2) NOT NULL CHECK (monthly_limit > 0),
             UNIQUE (user_id, category)
         )`,
+        
+        `CREATE TABLE IF NOT EXISTS notes (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL DEFAULT '',
+            is_private BOOLEAN NOT NULL DEFAULT FALSE,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )`,
+        'CREATE INDEX IF NOT EXISTS idx_notes_user ON notes(user_id)',
     ];
 
     for (const statement of migrations) {

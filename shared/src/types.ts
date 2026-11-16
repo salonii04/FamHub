@@ -169,3 +169,21 @@ export interface BudgetSummary {
   balance: number;
   byCategory: BudgetCategorySummary[];
 }
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  is_private: boolean;
+  author_id: string;
+  author_name: string | null;
+  is_mine: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface NoteInput {
+  title: string;
+  content: string;
+  is_private: boolean;
+}

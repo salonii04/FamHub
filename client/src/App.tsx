@@ -10,6 +10,7 @@ import { ShoppingListPage } from './pages/ShoppingListPage'
 import { FamilyPage } from './pages/FamilyPage'
 import { MealPlanningPage } from './pages/MealPlanningPage'
 import { BudgetPage } from './pages/BudgetPage'
+import { NotesPage } from './pages/NotesPage'
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
               <Route path="/Family" element={<FamilyPage />} />              
               <Route path="*" element={<Navigate to="/" replace />} />
               <Route path="/budget" element={<BudgetPage />} />
+              <Route path="/notes" element={<NotesPage />} />
             </Route>
           </Route>
         </Routes>

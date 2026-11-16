@@ -11,6 +11,7 @@ const navItems = [
   { to: '/meals', label: 'Meals' },
   { to: '/budget', label: 'Budget' },
   { to: '/family', label: 'Family' },
+  { to: '/notes', label: 'Notes' },
 ]
 
 export function Layout() {
