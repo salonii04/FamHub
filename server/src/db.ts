@@ -166,6 +166,25 @@ export const runMigrations = async () => {
         'CREATE INDEX IF NOT EXISTS idx_meal_plans_user_id ON meal_plans(user_id)',
         'CREATE INDEX IF NOT EXISTS idx_meal_plans_date ON meal_plans(date)',
 
+        `CREATE TABLE IF NOT EXISTS budget_transactions (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+            type VARCHAR(10) NOT NULL CHECK (type IN ('expense', 'income')),
+            amount NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
+            category TEXT NOT NULL DEFAULT 'Other',
+            description TEXT,
+            date DATE NOT NULL DEFAULT CURRENT_DATE,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )`,
+        'CREATE INDEX IF NOT EXISTS idx_budget_transactions_user_date ON budget_transactions(user_id, date)',
+        `CREATE TABLE IF NOT EXISTS budget_limits (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            category TEXT NOT NULL,
+            monthly_limit NUMERIC(12, 2) NOT NULL CHECK (monthly_limit > 0),
+            UNIQUE (user_id, category)
+        )`,
     ];
 
     for (const statement of migrations) {

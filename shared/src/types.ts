@@ -135,3 +135,37 @@ export interface CreateMealPlanInput {
 }
 
 export type UpdateMealPlanInput = Partial<CreateMealPlanInput>;
+
+export type BudgetEntryType = 'expense' | 'income';
+
+export interface BudgetTransaction {
+  id: string;
+  type: BudgetEntryType;
+  amount: number;
+  category: string;
+  description: string | null;
+  date: string;
+  created_at: string;
+}
+
+export interface CreateBudgetTransactionInput {
+  type: BudgetEntryType;
+  amount: number;
+  category: string;
+  description?: string;
+  date?: string;
+}
+
+export interface BudgetCategorySummary {
+  category: string;
+  spent: number;
+  limit: number | null;
+}
+
+export interface BudgetSummary {
+  month: string;
+  income: number;
+  expenses: number;
+  balance: number;
+  byCategory: BudgetCategorySummary[];
+}

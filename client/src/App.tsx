@@ -9,6 +9,7 @@ import { CalendarPage } from './pages/CalendarPage'
 import { ShoppingListPage } from './pages/ShoppingListPage'
 import { FamilyPage } from './pages/FamilyPage'
 import { MealPlanningPage } from './pages/MealPlanningPage'
+import { BudgetPage } from './pages/BudgetPage'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
               <Route path="/meals" element={<MealPlanningPage />} />
               <Route path="/Family" element={<FamilyPage />} />              
               <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/budget" element={<BudgetPage />} />
             </Route>
           </Route>
         </Routes>

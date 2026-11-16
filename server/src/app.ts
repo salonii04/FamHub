@@ -9,6 +9,7 @@ import shoppingRoutes from './routes/shopping';
 import appointmentRoutes from './routes/appointments';
 import mealPlansRoutes from './routes/mealPlans';
 import { loadEnv } from './config/loadEnv';
+import budgetRoutes from './routes/budget';
 
 loadEnv();
 
@@ -69,5 +70,6 @@ app.use((err: any, req: express.Request, res: express.Response, _next: express.N
     });
 });
 
+app.use('/api/budget', budgetRoutes);
 
 export default app;

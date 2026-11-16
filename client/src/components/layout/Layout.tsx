@@ -9,6 +9,7 @@ const navItems = [
   { to: '/calendar', label: 'Calendar' },
   { to: '/shopping', label: 'Shopping List' },
   { to: '/meals', label: 'Meals' },
+  { to: '/budget', label: 'Budget' },
   { to: '/family', label: 'Family' },
 ]
 
