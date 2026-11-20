@@ -11,6 +11,7 @@ import mealPlansRoutes from './routes/mealPlans';
 import { loadEnv } from './config/loadEnv';
 import budgetRoutes from './routes/budget';
 import notesRoutes from './routes/notes';
+import rewardsRoutes from './routes/rewards';
 
 loadEnv();
 
@@ -59,6 +60,7 @@ app.use('/api/family', familyRoutes);
 app.use('/api/meal-plans', mealPlansRoutes);
 app.use('/api/budget', budgetRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/rewards', rewardsRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ success: false, error: 'Route not found' });

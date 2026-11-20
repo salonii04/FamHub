@@ -197,6 +197,23 @@ export const runMigrations = async () => {
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )`,
         'CREATE INDEX IF NOT EXISTS idx_notes_user ON notes(user_id)',
+
+        // Rewards: points for tasks, approved by a parent.
+        'ALTER TABLE tasks ADD COLUMN IF NOT EXISTS points INTEGER NOT NULL DEFAULT 0',
+        'ALTER TABLE tasks ADD COLUMN IF NOT EXISTS assigned_to UUID REFERENCES family_members(id) ON DELETE SET NULL',
+        'ALTER TABLE tasks ADD COLUMN IF NOT EXISTS pending_approval BOOLEAN NOT NULL DEFAULT FALSE',
+        `CREATE TABLE IF NOT EXISTS reward_transactions (
+            id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            member_id UUID NOT NULL REFERENCES family_members(id) ON DELETE CASCADE,
+            task_id UUID REFERENCES tasks(id) ON DELETE SET NULL,
+            points INTEGER NOT NULL CHECK (points <> 0),
+            type VARCHAR(10) NOT NULL CHECK (type IN ('earned', 'redeemed', 'adjusted')),
+            note TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )`,
+        'CREATE INDEX IF NOT EXISTS idx_reward_tx_user_member ON reward_transactions(user_id, member_id)',
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_reward_tx_task_earned ON reward_transactions(task_id) WHERE type = 'earned'",
     ];
 
     for (const statement of migrations) {

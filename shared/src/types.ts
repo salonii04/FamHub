@@ -60,6 +60,9 @@ export interface Task {
   frequency: string | null;
   priority: string | null;
   completed_at: string | null;
+  points: number;
+  assigned_to: string | null;
+  pending_approval: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -70,6 +73,8 @@ export interface CreateTaskInput {
   due_date?: string;
   frequency?: string;
   priority?: string;
+  points?: number;
+  assigned_to?: string | null;
 }
 
 export interface UpdateTaskInput {
@@ -79,6 +84,8 @@ export interface UpdateTaskInput {
   due_date?: string;
   frequency?: string;
   priority?: string;
+  points?: number;
+  assigned_to?: string | null;
 }
 
 export interface TaskStatistics {
@@ -186,4 +193,40 @@ export interface NoteInput {
   title: string;
   content: string;
   is_private: boolean;
+}
+
+export type RewardTransactionType = 'earned' | 'redeemed' | 'adjusted';
+
+export interface RewardMemberSummary {
+  id: string;
+  name: string;
+  color: string;
+  role: string;
+  balance: number;
+  earned: number;
+  redeemed: number;
+}
+
+export interface RewardPendingTask {
+  id: string;
+  title: string;
+  points: number;
+  assigned_to: string | null;
+  member_name: string | null;
+}
+
+export interface RewardsSummary {
+  members: RewardMemberSummary[];
+  pending: RewardPendingTask[];
+}
+
+export interface RewardTransaction {
+  id: string;
+  member_id: string;
+  member_name: string | null;
+  task_id: string | null;
+  points: number;
+  type: RewardTransactionType;
+  note: string | null;
+  created_at: string;
 }

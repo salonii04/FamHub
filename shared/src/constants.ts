@@ -12,3 +12,5 @@ export const REMINDER_OPTIONS = [0, 30, 60] as const;
 
 export const MEAL_TYPES = ['Breakfast', 'Lunch', 'Dinner', 'Snack'] as const;
 export type MealType = (typeof MEAL_TYPES)[number];
+
+export const MAX_TASK_POINTS = 1000;

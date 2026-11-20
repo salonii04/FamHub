@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { query } from '../db';
-import { authMiddleware, AuthRequest } from '../middleware/auth';
+import { authMiddleware, isParentAccount, AuthRequest } from '../middleware/auth';
 import { toNullIfEmpty } from '../lib/normalize';
+import { awardTaskPoints, checkRewardFields, parsePoints, revokeTaskPoints } from '../lib/rewards';
 
 const router = Router();
 router.use(authMiddleware);
@@ -21,16 +22,26 @@ router.get('/', async (req: AuthRequest, res) => {
 
 router.post('/', async (req: AuthRequest, res) => {
     try {
-        const { title, description, due_date, frequency, priority } = req.body;
+        const { title, description, due_date, frequency, priority, points, assigned_to } = req.body;
 
         const cleanedTitle = typeof title === 'string' ? title.trim() : '';
         if (!cleanedTitle) {
             return res.status(400).json({ success: false, error: 'Title is required' });
         }
 
+        const taskPoints = parsePoints(points);
+        if (taskPoints === null) {
+            return res.status(400).json({ success: false, error: 'Points must be a whole number from 0 to 1000' });
+        }
+        const assignee = toNullIfEmpty(assigned_to) as string | null;
+        const rewardError = await checkRewardFields(req.userId, taskPoints, assignee);
+        if (rewardError) {
+            return res.status(400).json({ success: false, error: rewardError });
+        }
+
         const result = await query(
-            `INSERT INTO tasks (user_id, title, description, due_date, frequency, priority)
-             VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+            `INSERT INTO tasks (user_id, title, description, due_date, frequency, priority, points, assigned_to)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
             [
                 req.userId,
                 cleanedTitle,
@@ -38,6 +49,8 @@ router.post('/', async (req: AuthRequest, res) => {
                 toNullIfEmpty(due_date),
                 toNullIfEmpty(frequency),
                 toNullIfEmpty(priority),
+                taskPoints,
+                assignee,
             ]
         );
 
@@ -51,7 +64,7 @@ router.post('/', async (req: AuthRequest, res) => {
 router.put('/:id', async (req: AuthRequest, res) => {
     try {
         const { id } = req.params;
-        const { title, description, is_completed, due_date, frequency, priority } = req.body;
+        const { title, description, is_completed, due_date, frequency, priority, points, assigned_to } = req.body;
 
         const existingResult = await query('SELECT * FROM tasks WHERE id = $1 AND user_id = $2', [id, req.userId]);
         if (existingResult.rows.length === 0) {
@@ -78,12 +91,41 @@ router.put('/:id', async (req: AuthRequest, res) => {
         if (frequency !== undefined) pushUpdate('frequency', toNullIfEmpty(frequency));
         if (priority !== undefined) pushUpdate('priority', toNullIfEmpty(priority));
 
+        if (points !== undefined || assigned_to !== undefined) {
+            const newPoints = points !== undefined ? parsePoints(points) : Number(existing.points);
+            if (newPoints === null) {
+                return res.status(400).json({ success: false, error: 'Points must be a whole number from 0 to 1000' });
+            }
+            const newAssignee = (assigned_to !== undefined ? toNullIfEmpty(assigned_to) : existing.assigned_to) as string | null;
+            const rewardError = await checkRewardFields(req.userId, newPoints, newAssignee);
+            if (rewardError) {
+                return res.status(400).json({ success: false, error: rewardError });
+            }
+            pushUpdate('points', newPoints);
+            pushUpdate('assigned_to', newAssignee);
+        }
+
+        let justCompleted = false;
+        let justReopened = false;
         if (is_completed !== undefined) {
             const isCompleted = Boolean(is_completed);
             const wasCompleted = Boolean(existing.is_completed);
-            pushUpdate('is_completed', isCompleted);
-            if (isCompleted !== wasCompleted) {
-                updates.push(`completed_at = ${isCompleted ? 'NOW()' : 'NULL'}`);
+            const hasReward = Number(existing.points) > 0 && Boolean(existing.assigned_to);
+            const parent = await isParentAccount(req.actualUserId);
+
+            if (isCompleted && !wasCompleted && hasReward && !parent) {
+                // A child finished a task that pays points: a parent has to approve it first.
+                pushUpdate('pending_approval', true);
+            } else if (!isCompleted && wasCompleted && hasReward && !parent) {
+                return res.status(403).json({ success: false, error: 'Only a parent can reopen a task with points' });
+            } else {
+                pushUpdate('is_completed', isCompleted);
+                pushUpdate('pending_approval', false);
+                if (isCompleted !== wasCompleted) {
+                    updates.push(`completed_at = ${isCompleted ? 'NOW()' : 'NULL'}`);
+                    justCompleted = isCompleted;
+                    justReopened = !isCompleted;
+                }
             }
         }
 
@@ -96,7 +138,11 @@ router.put('/:id', async (req: AuthRequest, res) => {
             [...values, id, req.userId]
         );
 
-        res.json({ success: true, data: result.rows[0] });
+        const updated = result.rows[0];
+        if (justCompleted) await awardTaskPoints(updated);
+        if (justReopened) await revokeTaskPoints(updated.id);
+
+        res.json({ success: true, data: updated });
     } catch (error) {
         console.error('Update task error:', error);
         res.status(500).json({ success: false, error: 'Internal server error' });
@@ -119,7 +165,6 @@ router.delete('/:id', async (req: AuthRequest, res) => {
     }
 });
 
-// Exact match with the final file — no family/rewards coupling here.
 router.get('/statistics', async (req: AuthRequest, res) => {
     try {
         const result = await query(

@@ -7,6 +7,7 @@ import { useTasks } from '../hooks/useTasks'
 import { useAppointments } from '../hooks/useAppointments'
 import { useShoppingList } from '../hooks/useShoppingList'
 import { useBudget } from '../hooks/useBudget'
+import { useRewards } from '../hooks/useRewards'
 
 function SectionLink({ to, children }: { to: string; children: string }) {
   return (
@@ -28,6 +29,7 @@ export function HomePage() {
   })
   const { items, loading: shoppingLoading } = useShoppingList()
   const { summary } = useBudget(month)
+  const { summary: rewards } = useRewards()
 
   const currency = user?.currency ?? 'INR'
   const money = useMemo(
@@ -109,6 +111,31 @@ export function HomePage() {
           )}
         </Card>
       </div>
+      <Card>
+        <div className="mb-3 flex items-center justify-between">
+          <CardTitle>Rewards</CardTitle>
+          <SectionLink to="/rewards">All rewards</SectionLink>
+        </div>
+        {!rewards || rewards.members.length === 0 ? (
+          <p className="text-sm text-muted">Add family members to start earning points.</p>
+        ) : (
+          <>
+            <ul className="space-y-2 text-sm">
+              {rewards.members.map((m) => (
+                <li key={m.id} className="flex justify-between gap-3">
+                  <span>{m.name}</span>
+                  <span className="font-medium">{m.balance} points</span>
+                </li>
+              ))}
+            </ul>
+            {rewards.pending.length > 0 && (
+              <p className="mt-3 text-sm text-brand">
+                {rewards.pending.length} {rewards.pending.length === 1 ? 'task is' : 'tasks are'} waiting for approval
+              </p>
+            )}
+          </>
+        )}
+      </Card>
     </div>
   )
 }
