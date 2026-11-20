@@ -56,7 +56,9 @@ app.use("/api/shopping", shoppingRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use('/api/family', familyRoutes);
-app.use('/api/meal-plans', mealPlansRoutes)
+app.use('/api/meal-plans', mealPlansRoutes);
+app.use('/api/budget', budgetRoutes);
+app.use('/api/notes', notesRoutes);
 
 app.use((req, res) => {
     res.status(404).json({ success: false, error: 'Route not found' });
@@ -71,7 +73,5 @@ app.use((err: any, req: express.Request, res: express.Response, _next: express.N
     });
 });
 
-app.use('/api/budget', budgetRoutes);
-app.use('/api/notes', notesRoutes);
 
 export default app;
